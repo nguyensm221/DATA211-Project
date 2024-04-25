@@ -1,0 +1,38 @@
+---
+title: "Final Project"
+author: "Nguyen SM"
+date: "2024-04-24"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+Nguyen_screentime<-read_excel("Nguyen_screentime.xlsx")
+library(tidyverse)
+```
+
+# Null Testing
+## Claim: Gym attendance is less likely with more hours of screen time than hours of rest time.
+$P_s$: Proportion of gym attendance with higher screen time
+$P_r$: Proportion of gym attendance with higher rest time
+$H_0:P_s=P_r$ vs $H_a:P_s<P_r$
+```{r}
+table(Nguyen_screentime$Gym)
+Nguyen_screentime_data<-Nguyen_screentime%>%
+  filter(Gym%in%c("YES"))
+Nguyen_screentime_data
+
+t.test(Nguyen_screentime_data$Screentime,Nguyen_screentime_data$Rest,paired="TRUE")
+
+Nguyen_screentime_graph<-Nguyen_screentime_data%>%
+  mutate(`Higher Screentime`=if_else(Nguyen_screentime_data$Screentime>Nguyen_screentime_data$Rest,"Yes","No"))%>%
+  ggplot(aes(x=`Higher Screentime`))+geom_bar()+labs(y="Attendance Count")
+Nguyen_screentime_graph
+```
+p-value=0.06923>0.05
+Accept the $H_0$.
+At 5% significance level, we do not have sufficient evidence to conclude that gym attendance is likelier with a higher rest time.
